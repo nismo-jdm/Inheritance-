@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Islamic Inheritance Calculator based on Sunni Fiqh - Ilm al-Faraid according to Quran and Sunnah">
+    <meta name="keywords" content="Islamic Inheritance, Faraid, Sunni Fiqh, Inheritance Calculator, Mirath">
+    <title>Islamic Inheritance Portal - Sunni Fiqh Calculator</title>
+    <style>
+        :root {
+            --primary-green: #2D5F3F;
+            --accent-gold: #D4AF37;
+            --light-cream: #FAF9F6;
+            --dark-text: #1a1a1a;
+            --border-color: #e0d9c8;
+            --success-green: #4CAF50;
+            --white: #ffffff;
+        }
+
+        [data-theme="dark"] {
+            --primary-green: #1a3d2a;
+            --accent-gold: #B8960F;
+            --light-cream: #1a1a1a;
+            --dark-text: #e0e0e0;
+            --border-color: #3a3a3a;
+            --white: #2a2a2a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light-cream);
+            color: var(--dark-text);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        /* Islamic Pattern Background */
+        .pattern-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(212, 175, 55, 0.03) 35px, rgba(212, 175, 55, 0.03) 70px);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-green) 0%, #1a3d2a 100%);
+            color: white;
+            padding: 2rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><path d="M50 10 L60 40 L90 40 L65 55 L75 85 L50 70 L25 85 L35 55 L10 40 L40 40 Z" fill="rgba(212,175,55,0.1)"/></svg>');
+            opacity: 0.1;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .site-title {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .site-subtitle {
+            font-size: 1.2rem;
+            color: var(--accent-gold);
+            margin-bottom: 1rem;
+        }
+
+        .header-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--white);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: var(--primary-green);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+            padding: 0.5rem 0;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-gold);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        /* Page Sections */
+        .page-section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--accent-gold);
+        }
+
+        .card-title {
+            color: var(--primary-green);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Quranic Verse Display */
+        .quran-verse {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-right: 4px solid var(--accent-gold);
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            font-family: 'Traditional Arabic', serif;
+        }
+
+        .arabic-text {
+            font-size: 1.8rem;
+            text-align: right;
+            direction: rtl;
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+            line-height: 2.5;
+        }
+
+        .translation {
+            font-style: italic;
+            color: #555;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+        }
+
+        .verse-reference {
+            color: var(--accent-gold);
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--primary-green);
+        }
+
+        input[type="number"],
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            background: var(--white);
+            color: var(--dark-text);
+        }
+
+        input[type="number"]:focus,
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+        }
+
+        /* Checkbox Group */
+        .heir-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .heir-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background: var(--light-cream);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .heir-item:hover {
+            background: var(--accent-gold);
+            color: white;
+        }
+
+        .heir-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .heir-item.selected {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        /* Buttons */
+        .btn {
+            background: var(--primary-green);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            background: #1a3d2a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .btn-secondary {
+            background: var(--accent-gold);
+        }
+
+        .btn-secondary:hover {
+            background: #B8960F;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+
+        /* Toggle Buttons */
+        .toggle-btn {
+            background: var(--white);
+            color: var(--primary-green);
+            border: 2px solid var(--primary-green);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .toggle-btn:hover {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        /* Results Display */
+        .results-container {
+            display: none;
+            margin-top: 2rem;
+        }
+
+        .results-container.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        .result-item {
+            background: var(--white);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--success-green);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .heir-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .share-amount {
+            font-size: 1.5rem;
+            color: var(--accent-gold);
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+
+        .share-details {
+            color: #666;
+            margin: 0.5rem 0;
+        }
+
+        .evidence-tag {
+            display: inline-block;
+            background: var(--light-cream);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            color: var(--primary-green);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Summary Box */
+        .summary-box {
+            background: linear-gradient(135deg, var(--primary-green) 0%, #1a3d2a 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        /* FAQ Accordion */
+        .faq-item {
+            background: var(--white);
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .faq-question {
+            padding: 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--primary-green);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+
+        .faq-question:hover {
+            background: var(--light-cream);
+        }
+
+        .faq-answer {
+            padding: 0 1.5rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .faq-item.active .faq-answer {
+            padding: 1.5rem;
+            max-height: 500px;
+        }
+
+        .faq-icon {
+            transition: transform 0.3s;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Evidence References */
+        .evidence-section {
+            background: var(--white);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-gold);
+        }
+
+        .evidence-title {
+            color: var(--primary-green);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        /* Disclaimer Box */
+        .disclaimer {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .disclaimer-title {
+            color: #856404;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary-green);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        /* Print Styles */
+        @media print {
+            nav, .header-controls, .btn-group, footer {
+                display: none;
+            }
+            
+            .card {
+                break-inside: avoid;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .site-title {
+                font-size: 1.8rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .heir-selection {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 4px solid var(--light-cream);
+            border-top: 4px solid var(--accent-gold);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+            display: none;
+        }
+
+        .spinner.active {
+            display: block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Language Toggle */
+        [dir="rtl"] {
+            direction: rtl;
+        }
+
+        [dir="rtl"] .card {
+            border-left: none;
+            border-right: 4px solid var(--accent-gold);
+        }
+
+        /* Utility Classes */
+        .text-center {
+            text-align: center;
+        }
+
+        .mb-2 {
+            margin-bottom: 2rem;
+        }
+
+        .mt-2 {
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="pattern-overlay"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <h1 class="site-title">🕌 Islamic Inheritance Portal</h1>
+            <p class="site-subtitle">Based on Sunni Fiqh Methodology - Ahlus Sunnah wal Jama'ah</p>
+            <div class="header-controls">
+                <button class="toggle-btn" onclick="toggleTheme()">🌙 Dark Mode</button>
+                <button class="toggle-btn" onclick="toggleLanguage()">🌐 العربية</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="#" onclick="showPage('home')">🏠 Home</a></li>
+                <li><a href="#" onclick="showPage('calculator')">🧮 Calculator</a></li>
+                <li><a href="#" onclick="showPage('evidence')">📚 Evidence</a></li>
+                <li><a href="#" onclick="showPage('faq')">❓ FAQ</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        
+        <!-- HOME PAGE -->
+        <section id="home" class="page-section active">
+            <div class="card">
+                <h2 class="card-title">🌙 Welcome to Islamic Inheritance (Ilm al-Faraid)</h2>
+                <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">
+                    The science of Islamic inheritance (Faraid) is a noble branch of Islamic knowledge that ensures the fair and just distribution of wealth according to the divine wisdom of Allah (ﷻ) as revealed in the Qur'an and taught by Prophet Muhammad (ﷺ).
+                </p>
+
+                <div class="quran-verse">
+                    <div class="arabic-text">
+                        يُوصِيكُمُ ٱللَّهُ فِىٓ أَوْلَـٰدِكُمْ ۖ لِلذَّكَرِ مِثْلُ حَظِّ ٱلْأُنثَيَيْنِ
+                    </div>
+                    <div class="translation">
+                        "Allah commands you regarding your children: the share of the male is like that of two females."
+                    </div>
+                    <div class="verse-reference">— Surah An-Nisa (4:11)</div>
+                </div>
+
+                <div class="quran-verse">
+                    <div class="arabic-text">
+                        وَلَكُمْ نِصْفُ مَا تَرَكَ أَزْوَٰجُكُمْ إِن لَّمْ يَكُن لَّهُنَّ وَلَدٌ
+                    </div>
+                    <div class="translation">
+                        "And for you is half of what your wives leave if they have no child. But if they have a child, for you is one fourth of what they leave..."
+                    </div>
+                    <div class="verse-reference">— Surah An-Nisa (4:12)</div>
+                </div>
+
+                <div class="disclaimer">
+                    <div class="disclaimer-title">⚠️ Important Notice</div>
+                    <p>This portal follows the <strong>Sunni Fiqh methodology</strong> according to the Qur'an, authentic Sunnah, and classical scholars of Ahlus Sunnah wal Jama'ah. For complex cases involving multiple heirs or special circumstances, please consult qualified Islamic scholars.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">📖 Foundations of Faraid</h2>
+                <h3 style="color: var(--primary-green); margin: 1.5rem 0 1rem;">1. Order of Distribution</h3>
+                <ol style="line-height: 2; margin-left: 2rem;">
+                    <li><strong>Funeral expenses</strong> - First priority</li>
+                    <li><strong>Debts</strong> - Must be paid before distribution</li>
+                    <li><strong>Wasiyyah (Will)</strong> - Maximum 1/3 of estate, to non-heirs only</li>
+                    <li><strong>Inheritance distribution</strong> - According to fixed shares</li>
+                </ol>
+
+                <h3 style="color: var(--primary-green); margin: 1.5rem 0 1rem;">2. Categories of Heirs</h3>
+                <ul style="line-height: 2; margin-left: 2rem;">
+                    <li><strong>Ashab al-Furud (Fixed Share Heirs)</strong> - Those with specified shares in Qur'an</li>
+                    <li><strong>Asabah (Residuaries)</strong> - Those who take remainder after fixed shares</li>
+                    <li><strong>Dhawil Arham (Distant Kindred)</strong> - Relatives who inherit when no closer heirs exist</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CALCULATOR PAGE -->
+        <section id="calculator" class="page-section">
+            <div class="card">
+                <h2 class="card-title">🧮 Inheritance Calculator</h2>
+                
+                <form id="inheritanceForm">
+                    <!-- Estate Information -->
+                    <h3 style="color: var(--primary-green); margin-bottom: 1rem;">Estate Information</h3>
+                    
+                    <div class="form-group">
+                        <label for="totalWealth">Total Estate Value (in your currency)</label>
+                        <input type="number" id="totalWealth" min="0" step="0.01" required placeholder="e.g., 100000">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="debts">Outstanding Debts</label>
+                        <input type="number" id="debts" min="0" step="0.01" value="0" placeholder="e.g., 5000">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="wasiyyah">Wasiyyah/Will Amount (Max 1/3 of estate after debts)</label>
+                        <input type="number" id="wasiyyah" min="0" step="0.01" value="0" placeholder="e.g., 3000">
+                        <small style="color: #666; display: block; margin-top: 0.5rem;">
+                            ⚠️ The will cannot exceed 1/3 of the estate and cannot be for legal heirs.
+                        </small>
+                    </div>
+
+                    <!-- Heir Selection -->
+                    <h3 style="color: var(--primary-green); margin: 2rem 0 1rem;">Select Heirs</h3>
+                    
+                    <div class="form-group">
+                        <label>Spouse</label>
+                        <div class="heir-selection">
+                            <div class="heir-item" onclick="toggleHeir(this, 'husband')">
+                                <input type="checkbox" id="husband" value="husband">
+                                <label for="husband" style="margin: 0; cursor: pointer;">Husband</label>
+                            </div>
+                            <div class="heir-item" onclick="toggleHeir(this, 'wife')">
+                                <input type="checkbox" id="wife" value="wife">
+                                <label for="wife" style="margin: 0; cursor: pointer;">Wife</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Parents</label>
+                        <div class="heir-selection">
+                            <div class="heir-item" onclick="toggleHeir(this, 'father')">
+                                <input type="checkbox" id="father" value="father">
+                                <label for="father" style="margin: 0; cursor: pointer;">Father</label>
+                            </div>
+                            <div class="heir-item" onclick="toggleHeir(this, 'mother')">
+                                <input type="checkbox" id="mother" value="mother">
+                                <label for="mother" style="margin: 0; cursor: pointer;">Mother</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Children (Specify number)</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div>
+                                <label for="sons">Number of Sons</label>
+                                <input type="number" id="sons" min="0" value="0" placeholder="0">
+                            </div>
+                            <div>
+                                <label for="daughters">Number of Daughters</label>
+                                <input type="number" id="daughters" min="0" value="0" placeholder="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Grandparents</label>
+                        <div class="heir-selection">
+                            <div class="heir-item" onclick="toggleHeir(this, 'paternalGrandfather')">
+                                <input type="checkbox" id="paternalGrandfather" value="paternalGrandfather">
+                                <label for="paternalGrandfather" style="margin: 0; cursor: pointer;">Paternal Grandfather</label>
+                            </div>
+                            <div class="heir-item" onclick="toggleHeir(this, 'paternalGrandmother')">
+                                <input type="checkbox" id="paternalGrandmother" value="paternalGrandmother">
+                                <label for="paternalGrandmother" style="margin: 0; cursor: pointer;">Paternal Grandmother</label>
+                            </div>
+                            <div class="heir-item" onclick="toggleHeir(this, 'maternalGrandmother')">
+                                <input type="checkbox" id="maternalGrandmother" value="maternalGrandmother">
+                                <label for="maternalGrandmother" style="margin: 0; cursor: pointer;">Maternal Grandmother</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Siblings (Specify number)</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div>
+                                <label for="fullBrothers">Full Brothers</label>
+                                <input type="number" id="fullBrothers" min="0" value="0" placeholder="0">
+                            </div>
+                            <div>
+                                <label for="fullSisters">Full Sisters</label>
+                                <input type="number" id="fullSisters" min="0" value="0" placeholder="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="submit" class="btn">Calculate Inheritance</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset Form</button>
+                    </div>
+                </form>
+
+                <div class="spinner" id="spinner"></div>
+
+                <!-- Results Container -->
+                <div id="resultsContainer" class="results-container">
+                    <h2 style="color: var(--primary-green); margin: 2rem 0 1rem;">Distribution Results</h2>
+                    
+                    <div id="summaryBox" class="summary-box"></div>
+                    
+                    <div id="heirResults"></div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-secondary" onclick="downloadPDF()">📄 Download PDF</button>
+                        <button class="btn btn-secondary" onclick="window.print()">🖨️ Print Results</button>
+                    </div>
+
+                    <div class="disclaimer" style="margin-top: 2rem;">
+                        <div class="disclaimer-title">📌 Verification Required</div>
+                        <p>These calculations are based on Sunni Fiqh principles. For verification or complex cases, please consult a qualified Islamic scholar specializing in inheritance law.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EVIDENCE PAGE -->
+        <section id="evidence" class="page-section">
+            <div class="card">
+                <h2 class="card-title">📚 Evidence & References</h2>
+
+                <div class="evidence-section">
+                    <div class="evidence-title">🕋 Quranic Evidence</div>
+                    
+                    <div class="quran-verse">
+                        <div class="arabic-text">
+                            يُوصِيكُمُ ٱللَّهُ فِىٓ أَوْلَـٰدِكُمْ ۖ لِلذَّكَرِ مِثْلُ حَظِّ ٱلْأُنثَيَيْنِ ۚ فَإِن كُنَّ نِسَآءً فَوْقَ ٱثْنَتَيْنِ فَلَهُنَّ ثُلُثَا مَا تَرَكَ ۖ وَإِن كَانَتْ وَٰحِدَةً فَلَهَا ٱلنِّصْفُ
+                        </div>
+                        <div class="translation">
+                            "Allah commands you regarding your children: the share of the male is like that of two females. But if they are (only) daughters, two or more, theirs is two-thirds of the inheritance; and if there is only one, her share is half."
+                        </div>
+                        <div class="verse-reference">— Surah An-Nisa (4:11)</div>
+                    </div>
+
+                    <div class="quran-verse">
+                        <div class="arabic-text">
+                            وَلَكُمْ نِصْفُ مَا تَرَكَ أَزْوَٰجُكُمْ إِن لَّمْ يَكُن لَّهُنَّ وَلَدٌ ۚ فَإِن كَانَ لَهُنَّ وَلَدٌ فَلَكُمُ ٱلرُّبُعُ مِمَّا تَرَكْنَ
+                        </div>
+                        <div class="translation">
+                            "And for you is half of what your wives leave if they have no child. But if they have a child, for you is one fourth of what they leave, after any bequest they [may have] made or debt."
+                        </div>
+                        <div class="verse-reference">— Surah An-Nisa (4:12)</div>
+                    </div>
+                </div>
+
+                <div class="evidence-section">
+                    <div class="evidence-title">📖 Hadith Evidence</div>
+                    
+                    <p style="background: var(--light-cream); padding: 1rem; border-radius: 5px; margin: 1rem 0;">
+                        <strong>Narrated by Ibn Abbas (رضي الله عنه):</strong><br>
+                        The Prophet (ﷺ) said: "Give the Faraid (shares prescribed in the Qur'an) to those who are entitled to them, and whatever remains should be given to the closest male relative of the deceased."
+                        <br><em style="color: var(--accent-gold); display: block; margin-top: 0.5rem;">— Sahih al-Bukhari 6732, Sahih Muslim 1615</em>
+                    </p>
+
+                    <p style="background: var(--light-cream); padding: 1rem; border-radius: 5px; margin: 1rem 0;">
+                        <strong>Narrated by Abu Huraira (رضي الله عنه):</strong><br>
+                        The Messenger of Allah (ﷺ) said: "I am closer to the believers than their own selves, so whoever dies leaving debts or dependents, I will be responsible for them."
+                        <br><em style="color: var(--accent-gold); display: block; margin-top: 0.5rem;">— Sahih al-Bukhari 2399</em>
+                    </p>
+                </div>
+
+                <div class="evidence-section">
+                    <div class="evidence-title">⚖️ Fixed Shares (Fard) Explanation</div>
+                    
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                        <thead>
+                            <tr style="background: var(--primary-green); color: white;">
+                                <th style="padding: 1rem; text-align: left;">Heir</th>
+                                <th style="padding: 1rem; text-align: left;">Share</th>
+                                <th style="padding: 1rem; text-align: left;">Condition</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 1rem;">Husband</td>
+                                <td style="padding: 1rem; color: var(--accent-gold); font-weight: bold;">1/2</td>
+                                <td style="padding: 1rem;">If wife has no children</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 1rem;">Husband</td>
+                                <td style="padding: 1rem; color: var(--accent-gold); font-weight: bold;">1/4</td>
+                                <td style="padding: 1rem;">If wife has children</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 1rem;">Wife</td>
+                                <td style="padding: 1rem; color: var(--accent-gold); font-weight: bold;">1/4</td>
+                                <td style="padding: 1rem;">If husband has no children</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 1rem;">Wife</td>
+                                <td style="padding: 1rem; color: var(--accent-gold); font-weight: bold;">1/8</td>
+                                <td style="padding: 1rem;">If husband has children</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 1rem;">Mother</td>
+                                <td style="padding: 1rem; color: var(--accent-gold); font-weight: bold;">1/3</td>
+                                <td style="padding: 1rem;">If deceased has no children/siblings</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 1rem;">Mother</td>
+                                <td style="padding: 1rem; color: var(--accent-gold); font-weight: bold;">1/6</td>
+                                <td style="padding: 1rem;">If deceased has children/siblings</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 1rem;">Father</td>
+                                <td style="padding: 1rem; color: var(--accent-gold); font-weight: bold;">1/6</td>
+                                <td style="padding: 1rem;">If deceased has children</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 1rem;">Daughter (one)</td>
+                                <td style="padding: 1rem; color: var(--accent-gold); font-weight: bold;">1/2</td>
+                                <td style="padding: 1rem;">If she is the only child</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 1rem;">Daughters (2+)</td>
+                                <td style="padding: 1rem; color: var(--accent-gold); font-weight: bold;">2/3</td>
+                                <td style="padding: 1rem;">If there are only daughters</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="evidence-section">
+                    <div class="evidence-title">📘 Classical Fiqh References</div>
+                    <ul style="line-height: 2; margin-left: 2rem;">
+                        <li><strong>Al-Mughni</strong> by Ibn Qudamah - Comprehensive Hanbali Fiqh text</li>
+                        <li><strong>Bidayat al-Mujtahid</strong> by Ibn Rushd - Comparative Fiqh analysis</li>
+                        <li><strong>Al-Muhalla</strong> by Ibn Hazm - Detailed inheritance rulings</li>
+                        <li><strong>Fiqh us-Sunnah</strong> by Sayyid Sabiq - Modern comprehensive guide</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ PAGE -->
+        <section id="faq" class="page-section">
+            <div class="card">
+                <h2 class="card-title">❓ Frequently Asked Questions</h2>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>What if the deceased has only daughters and no sons?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>If there is one daughter, she receives 1/2 of the estate. If there are two or more daughters, they collectively receive 2/3 of the estate. The remainder goes to the closest male relative (Asabah) such as the father, grandfather, or brothers.</p>
+                        <p style="margin-top: 0.5rem;"><strong>Evidence:</strong> "But if they are (only) daughters, two or more, theirs is two-thirds of the inheritance; and if there is only one, her share is half." (Surah An-Nisa 4:11)</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>What happens if the deceased has no children?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>The inheritance goes to other eligible heirs in the following order:</p>
+                        <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                            <li>Spouse receives their fixed share (husband: 1/2, wife: 1/4)</li>
+                            <li>Parents receive their shares</li>
+                            <li>Siblings may inherit as Asabah or receive fixed shares</li>
+                            <li>More distant relatives if no closer heirs exist</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>What is the 1/3 Wasiyyah (Will) rule?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>A Muslim can make a will (Wasiyyah) for up to one-third (1/3) of their estate after debts are paid. This portion can be given to non-heirs, charities, or distant relatives who don't inherit.</p>
+                        <p style="margin-top: 0.5rem;"><strong>Important:</strong> The will cannot be made in favor of legal heirs who already have fixed shares, as this would upset the divinely ordained distribution.</p>
+                        <p style="margin-top: 0.5rem;"><strong>Evidence:</strong> The Prophet (ﷺ) said: "Allah has given everyone who has rights their due rights, so there is no will for an heir." (Sunan Abu Dawud 2870)</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>How does Sunni inheritance differ from other schools?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>This portal follows Sunni jurisprudence based on the four major schools (Hanafi, Maliki, Shafi'i, Hanbali) which have minor differences in some details but agree on fundamental principles.</p>
+                        <p style="margin-top: 0.5rem;">The main differences with other Islamic schools relate to:</p>
+                        <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                            <li>Order of priority for certain distant relatives</li>
+                            <li>Inheritance rights of specific family members</li>
+                            <li>Application of Awl and Radd principles</li>
+                        </ul>
+                        <p style="margin-top: 0.5rem;">This calculator follows mainstream Sunni positions based on Quranic verses and authentic Hadith.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>What is Hajb (blocking/exclusion)?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Hajb refers to the exclusion or reduction of an heir's share due to the presence of a closer heir. There are two types:</p>
+                        <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                            <li><strong>Hajb Hirman (Complete Exclusion):</strong> The heir receives nothing due to a closer relative (e.g., grandparents are excluded if parents exist)</li>
+                            <li><strong>Hajb Nuqsan (Reduction):</strong> The heir's share is reduced (e.g., mother receives 1/6 instead of 1/3 if there are children)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>What are Awl and Radd?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p><strong>Awl (Proportional Reduction):</strong> When the total fixed shares exceed the estate, all shares are proportionally reduced. This was established by the Companions, particularly Umar ibn al-Khattab (رضي الله عنه).</p>
+                        <p style="margin-top: 0.5rem;"><strong>Radd (Return/Increase):</strong> When fixed shares don't exhaust the estate and there are no Asabah (residuaries), the remainder is distributed proportionally among the fixed-share heirs (excluding the spouse in most schools).</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>Must debts be paid before inheritance?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, absolutely. The order of priority is:</p>
+                        <ol style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                            <li>Funeral expenses</li>
+                            <li>Settlement of debts</li>
+                            <li>Execution of valid Wasiyyah (up to 1/3)</li>
+                            <li>Distribution of inheritance</li>
+                        </ol>
+                        <p style="margin-top: 0.5rem;"><strong>Evidence:</strong> Allah says "after any bequest they may have made or debt" (Surah An-Nisa 4:11-12), placing debt settlement before inheritance.</p>
+                    </div>
+                </div>
+
+                <div class="disclaimer">
+                    <div class="disclaimer-title">🔍 Need More Guidance?</div>
+                    <p>For complex inheritance cases involving multiple heirs, unusual family situations, or specific questions about your circumstances, please consult a qualified Islamic scholar or mufti specializing in inheritance law (Ilm al-Faraid).</p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p><strong>Islamic Inheritance Portal</strong></p>
+        <p>Based on Sunni Fiqh Methodology - Ahlus Sunnah wal Jama'ah</p>
+        <p style="margin-top: 1rem; font-size: 0.9rem;">
+            References: Qur'an | Sahih al-Bukhari | Sahih Muslim | Al-Mughni (Ibn Qudamah)
+        </p>
+        <p style="margin-top: 1rem; font-size: 0.85rem; opacity: 0.8;">
+            © 2026 Islamic Inheritance Portal | For Educational Purposes
+        </p>
+    </footer>
+
+    <script>
+        // Page Navigation
+        function showPage(pageId) {
+            const sections = document.querySelectorAll('.page-section');
+            sections.forEach(section => section.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Theme Toggle
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? '' : 'dark';
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Load saved theme
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.body.setAttribute('data-theme', savedTheme);
+            }
+        });
+
+        // Language Toggle (Placeholder)
+        function toggleLanguage() {
+            alert('Arabic language support coming soon! العربية قريباً');
+        }
+
+        // Heir Selection Toggle
+        function toggleHeir(element, checkboxId) {
+            const checkbox = document.getElementById(checkboxId);
+            checkbox.checked = !checkbox.checked;
+            element.classList.toggle('selected');
+        }
+
+        // FAQ Toggle
+        function toggleFAQ(element) {
+            const faqItem = element.parentElement;
+            faqItem.classList.toggle('active');
+        }
+
+        // Form Reset
+        function resetForm() {
+            document.getElementById('inheritanceForm').reset();
+            document.querySelectorAll('.heir-item.selected').forEach(item => {
+                item.classList.remove('selected');
+            });
+            document.getElementById('resultsContainer').classList.remove('show');
+        }
+
+        // Inheritance Calculation Logic
+        document.getElementById('inheritanceForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show spinner
+            document.getElementById('spinner').classList.add('active');
+            
+            // Simulate calculation delay
+            setTimeout(() => {
+                calculateInheritance();
+                document.getElementById('spinner').classList.remove('active');
+            }, 1000);
+        });
+
+        function calculateInheritance() {
+            // Get form values
+            const totalWealth = parseFloat(document.getElementById('totalWealth').value) || 0;
+            const debts = parseFloat(document.getElementById('debts').value) || 0;
+            let wasiyyah = parseFloat(document.getElementById('wasiyyah').value) || 0;
+            
+            // Calculate net estate
+            const afterDebts = totalWealth - debts;
+            const maxWasiyyah = afterDebts / 3;
+            
+            // Validate wasiyyah
+            if (wasiyyah > maxWasiyyah) {
+                alert(`Wasiyyah cannot exceed 1/3 of estate after debts. Maximum allowed: ${maxWasiyyah.toFixed(2)}`);
+                wasiyyah = maxWasiyyah;
+                document.getElementById('wasiyyah').value = maxWasiyyah.toFixed(2);
+            }
+            
+            const inheritableEstate = afterDebts - wasiyyah;
+            
+            // Get heirs
+            const heirs = {
+                husband: document.getElementById('husband').checked,
+                wife: document.getElementById('wife').checked,
+                father: document.getElementById('father').checked,
+                mother: document.getElementById('mother').checked,
+                sons: parseInt(document.getElementById('sons').value) || 0,
+                daughters: parseInt(document.getElementById('daughters').value) || 0,
+                paternalGrandfather: document.getElementById('paternalGrandfather').checked,
+                paternalGrandmother: document.getElementById('paternalGrandmother').checked,
+                maternalGrandmother: document.getElementById('maternalGrandmother').checked,
+                fullBrothers: parseInt(document.getElementById('fullBrothers').value) || 0,
+                fullSisters: parseInt(document.getElementById('fullSisters').value) || 0
+            };
+            
+            // Calculate shares
+            const results = calculateShares(heirs, inheritableEstate);
+            
+            // Display results
+            displayResults(results, totalWealth, debts, wasiyyah, inheritableEstate);
+        }
+
+        function calculateShares(heirs, estate) {
+            const results = [];
+            let totalShares = 0;
+            const hasChildren = heirs.sons > 0 || heirs.daughters > 0;
+            
+            // Husband's share
+            if (heirs.husband) {
+                const share = hasChildren ? 1/4 : 1/2;
+                results.push({
+                    name: 'Husband',
+                    share: share,
+                    amount: estate * share,
+                    evidence: hasChildren ? 'Surah An-Nisa 4:12 - 1/4 (wife has children)' : 'Surah An-Nisa 4:12 - 1/2 (wife has no children)'
+                });
+                totalShares += share;
+            }
+            
+            // Wife's share
+            if (heirs.wife) {
+                const share = hasChildren ? 1/8 : 1/4;
+                results.push({
+                    name: 'Wife',
+                    share: share,
+                    amount: estate * share,
+                    evidence: hasChildren ? 'Surah An-Nisa 4:12 - 1/8 (husband has children)' : 'Surah An-Nisa 4:12 - 1/4 (husband has no children)'
+                });
+                totalShares += share;
+            }
+            
+            // Father's share
+            if (heirs.father) {
+                if (hasChildren) {
+                    const share = 1/6;
+                    results.push({
+                        name: 'Father',
+                        share: share,
+                        amount: estate * share,
+                        evidence: 'Surah An-Nisa 4:11 - 1/6 (deceased has children)'
+                    });
+                    totalShares += share;
+                } else {
+                    // Father takes as Asabah (will be calculated later)
+                    results.push({
+                        name: 'Father',
+                        share: null,
+                        asabah: true,
+                        evidence: 'Asabah - Takes remainder (no children)'
+                    });
+                }
+            }
+            
+            // Mother's share
+            if (heirs.mother) {
+                const hasSiblings = heirs.fullBrothers > 0 || heirs.fullSisters > 0;
+                const share = (hasChildren || hasSiblings) ? 1/6 : 1/3;
+                results.push({
+                    name: 'Mother',
+                    share: share,
+                    amount: estate * share,
+                    evidence: (hasChildren || hasSiblings) ? 
+                        'Surah An-Nisa 4:11 - 1/6 (deceased has children/siblings)' : 
+                        'Surah An-Nisa 4:11 - 1/3 (no children/siblings)'
+                });
+                totalShares += share;
+            }
+            
+            // Children's shares
+            if (hasChildren) {
+                if (heirs.sons > 0) {
+                    // Sons and daughters share as Asabah (2:1 ratio)
+                    const totalChildren = heirs.sons + (heirs.daughters * 0.5);
+                    const remainingEstate = estate * (1 - totalShares);
+                    const perShare = remainingEstate / totalChildren;
+                    
+                    if (heirs.sons > 0) {
+                        results.push({
+                            name: `${heirs.sons} Son${heirs.sons > 1 ? 's' : ''}`,
+                            share: null,
+                            amount: perShare * heirs.sons,
+                            asabah: true,
+                            evidence: 'Surah An-Nisa 4:11 - Asabah (male gets double female)'
+                        });
+                    }
+                    
+                    if (heirs.daughters > 0) {
+                        results.push({
+                            name: `${heirs.daughters} Daughter${heirs.daughters > 1 ? 's' : ''}`,
+                            share: null,
+                            amount: (perShare / 2) * heirs.daughters,
+                            asabah: true,
+                            evidence: 'Surah An-Nisa 4:11 - Asabah (with brothers)'
+                        });
+                    }
+                } else if (heirs.daughters > 0) {
+                    // Only daughters
+                    const share = heirs.daughters === 1 ? 1/2 : 2/3;
+                    results.push({
+                        name: `${heirs.daughters} Daughter${heirs.daughters > 1 ? 's' : ''}`,
+                        share: share,
+                        amount: estate * share,
+                        evidence: heirs.daughters === 1 ? 
+                            'Surah An-Nisa 4:11 - 1/2 (only one daughter)' : 
+                            'Surah An-Nisa 4:11 - 2/3 (two or more daughters)'
+                    });
+                    totalShares += share;
+                }
+            }
+            
+            // Grandparents (if parents don't exist)
+            if (!heirs.father && heirs.paternalGrandfather) {
+                if (hasChildren) {
+                    const share = 1/6;
+                    results.push({
+                        name: 'Paternal Grandfather',
+                        share: share,
+                        amount: estate * share,
+                        evidence: 'Like father - 1/6 (deceased has children)'
+                    });
+                    totalShares += share;
+                }
+            }
+            
+            if (!heirs.mother && (heirs.paternalGrandmother || heirs.maternalGrandmother)) {
+                const grandmothers = [];
+                if (heirs.paternalGrandmother) grandmothers.push('Paternal');
+                if (heirs.maternalGrandmother) grandmothers.push('Maternal');
+                
+                const share = 1/6;
+                const perGrandmother = share / grandmothers.length;
+                
+                grandmothers.forEach(type => {
+                    results.push({
+                        name: `${type} Grandmother`,
+                        share: perGrandmother,
+                        amount: estate * perGrandmother,
+                        evidence: 'Hadith - 1/6 shared among grandmothers'
+                    });
+                    totalShares += perGrandmother;
+                });
+            }
+            
+            // Siblings (only if no children and no father)
+            if (!hasChildren && !heirs.father) {
+                if (heirs.fullBrothers > 0 || heirs.fullSisters > 0) {
+                    const remainingEstate = estate * (1 - totalShares);
+                    
+                    if (heirs.fullBrothers > 0) {
+                        const totalSiblings = heirs.fullBrothers + (heirs.fullSisters * 0.5);
+                        const perShare = remainingEstate / totalSiblings;
+                        
+                        results.push({
+                            name: `${heirs.fullBrothers} Full Brother${heirs.fullBrothers > 1 ? 's' : ''}`,
+                            share: null,
+                            amount: perShare * heirs.fullBrothers,
+                            asabah: true,
+                            evidence: 'Asabah - Male gets double female'
+                        });
+                        
+                        if (heirs.fullSisters > 0) {
+                            results.push({
+                                name: `${heirs.fullSisters} Full Sister${heirs.fullSisters > 1 ? 's' : ''}`,
+                                share: null,
+                                amount: (perShare / 2) * heirs.fullSisters,
+                                asabah: true,
+                                evidence: 'Asabah - With brothers'
+                            });
+                        }
+                    } else if (heirs.fullSisters > 0) {
+                        const share = heirs.fullSisters === 1 ? 1/2 : 2/3;
+                        results.push({
+                            name: `${heirs.fullSisters} Full Sister${heirs.fullSisters > 1 ? 's' : ''}`,
+                            share: share,
+                            amount: estate * share,
+                            evidence: heirs.fullSisters === 1 ? 
+                                'Surah An-Nisa 4:176 - 1/2 (only sister)' : 
+                                'Surah An-Nisa 4:176 - 2/3 (two or more)'
+                        });
+                        totalShares += share;
+                    }
+                }
+            }
+            
+            // Calculate Asabah (residuary) shares
+            const asabahHeirs = results.filter(r => r.asabah);
+            if (asabahHeirs.length > 0) {
+                const fixedShareTotal = results
+                    .filter(r => !r.asabah && r.share !== null)
+                    .reduce((sum, r) => sum + r.share, 0);
+                
+                const remainder = estate * (1 - fixedShareTotal);
+                const asabahTotal = asabahHeirs.reduce((sum, r) => sum + (r.amount || 0), 0);
+                
+                // Adjust Asabah amounts if needed
+                asabahHeirs.forEach(heir => {
+                    if (asabahTotal > 0) {
+                        heir.amount = (heir.amount / asabahTotal) * remainder;
+                    }
+                });
+            }
+            
+            return results;
+        }
+
+        function displayResults(results, totalWealth, debts, wasiyyah, inheritableEstate) {
+            // Summary Box
+            const summaryBox = document.getElementById('summaryBox');
+            summaryBox.innerHTML = `
+                <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">Summary</h3>
+                <div class="summary-item">
+                    <span>Total Estate:</span>
+                    <strong>${totalWealth.toFixed(2)}</strong>
+                </div>
+                <div class="summary-item">
+                    <span>Less: Debts</span>
+                    <strong>${debts.toFixed(2)}</strong>
+                </div>
+                <div class="summary-item">
+                    <span>Less: Wasiyyah (Will)</span>
+                    <strong>${wasiyyah.toFixed(2)}</strong>
+                </div>
+                <div class="summary-item" style="border-top: 2px solid white; margin-top: 0.5rem; padding-top: 0.5rem;">
+                    <span>Distributable Estate:</span>
+                    <strong style="font-size: 1.3rem;">${inheritableEstate.toFixed(2)}</strong>
+                </div>
+            `;
+            
+            // Heir Results
+            const heirResults = document.getElementById('heirResults');
+            heirResults.innerHTML = results.map(heir => {
+                const percentage = ((heir.amount / inheritableEstate) * 100).toFixed(2);
+                const fraction = heir.share ? formatFraction(heir.share) : 'Remainder (Asabah)';
+                
+                return `
+                    <div class="result-item">
+                        <div class="heir-name">${heir.name}</div>
+                        <div class="share-amount">${heir.amount.toFixed(2)}</div>
+                        <div class="share-details">
+                            <strong>Share:</strong> ${fraction} (${percentage}%)
+                        </div>
+                        <div class="evidence-tag">📖 ${heir.evidence}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Show results
+            document.getElementById('resultsContainer').classList.add('show');
+            document.getElementById('resultsContainer').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function formatFraction(decimal) {
+            const fractions = {
+                0.5: '1/2',
+                0.333333: '1/3',
+                0.666667: '2/3',
+                0.25: '1/4',
+                0.125: '1/8',
+                0.166667: '1/6'
+            };
+            
+            const tolerance = 0.001;
+            for (const [key, value] of Object.entries(fractions)) {
+                if (Math.abs(parseFloat(key) - decimal) < tolerance) {
+                    return value;
+                }
+            }
+            
+            return decimal.toFixed(4);
+        }
+
+        function downloadPDF() {
+            alert('PDF download feature coming soon! You can use the Print option for now.');
+        }
+    </script>
+</body>
+</html>
