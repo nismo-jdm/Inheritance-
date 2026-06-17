@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nadia 2026-27 Print Cash Management</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
 <style>
 *{
@@ -183,6 +185,7 @@ tr:hover{
 </select>
 
 <button onclick="addRecord()">Add Order</button>
+<button onclick="exportPDF()">Export PDF</button>
 
 </div>
 </div>
@@ -343,6 +346,71 @@ function exportCSV(){
     a.href=url;
     a.download='PrintShopReport.csv';
     a.click();
+}
+    function exportPDF() {
+
+    const { jsPDF } = window.jspdf;
+
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+    doc.text("Print Shop Cash Report", 14, 20);
+
+    const tableData = [];
+
+    records.forEach(r => {
+        tableData.push([
+            r.date,
+            r.customer,
+            r.details,
+            r.copies,
+            "₹" + r.price,
+            "₹" + r.total,
+            r.status
+        ]);
+    });
+
+    doc.autoTable({
+        startY: 30,
+        head: [[
+            "Date",
+            "Customer",
+            "Printing Details",
+            "Copies",
+            "Unit Price",
+            "Total",
+            "Status"
+        ]],
+        body: tableData,
+        styles: {
+            fontSize: 9
+        },
+        headStyles: {
+            fillColor: [106,27,154]
+        }
+    });
+
+    let revenue = 0;
+    let paid = 0;
+    let pending = 0;
+
+    records.forEach(r => {
+        revenue += r.total;
+
+        if(r.status === "Paid"){
+            paid += r.total;
+        }else{
+            pending += r.total;
+        }
+    });
+
+    const finalY = doc.lastAutoTable.finalY + 15;
+
+    doc.text("Total Revenue : ₹" + revenue, 14, finalY);
+    doc.text("Total Paid : ₹" + paid, 14, finalY + 10);
+    doc.text("Total Pending : ₹" + pending, 14, finalY + 20);
+
+    doc.save("PrintShop_Report.pdf");
 }
 
 renderTable();
