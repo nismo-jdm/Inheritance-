@@ -1,251 +1,160 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nadia 2026-27 Print Cash Management</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <title>Union Print Cash Management</title>
 
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Segoe UI,sans-serif;
-}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 
-body{
-    background:#f5f6fa;
-    padding:20px;
-}
+    <style>
+        body{
+            font-family:Arial,sans-serif;
+            background:#f4f4f4;
+            margin:20px;
+        }
 
-.container{
-    max-width:1400px;
-    margin:auto;
-}
+        h2{
+            text-align:center;
+        }
 
-h1{
-    margin-bottom:20px;
-    color:#333;
-}
+        .dashboard{
+            display:flex;
+            gap:15px;
+            margin-bottom:20px;
+        }
 
-.dashboard{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-    gap:15px;
-    margin-bottom:20px;
-}
+        .card{
+            flex:1;
+            background:white;
+            padding:15px;
+            border-radius:8px;
+            text-align:center;
+            box-shadow:0 2px 5px rgba(0,0,0,.1);
+        }
 
-.card{
-    background:#fff;
-    padding:20px;
-    border-radius:10px;
-    box-shadow:0 2px 10px rgba(0,0,0,.1);
-}
+        input,select,button{
+            padding:10px;
+            margin:5px;
+        }
 
-.card h3{
-    color:#666;
-    margin-bottom:10px;
-}
+        table{
+            width:100%;
+            border-collapse:collapse;
+            background:white;
+        }
 
-.card h2{
-    color:#6a1b9a;
-}
+        th{
+            background:#5e3b8c;
+            color:white;
+            padding:10px;
+        }
 
-.form-section{
-    background:white;
-    padding:20px;
-    border-radius:10px;
-    margin-bottom:20px;
-    box-shadow:0 2px 10px rgba(0,0,0,.1);
-}
+        td{
+            padding:8px;
+            border:1px solid #ddd;
+        }
 
-.form-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-    gap:10px;
-}
+        .paid{
+            color:green;
+            font-weight:bold;
+        }
 
-input,select{
-    padding:10px;
-    border:1px solid #ccc;
-    border-radius:6px;
-}
+        .pending{
+            color:red;
+            font-weight:bold;
+        }
 
-button{
-    background:#6a1b9a;
-    color:white;
-    border:none;
-    padding:10px 15px;
-    border-radius:6px;
-    cursor:pointer;
-}
-
-button:hover{
-    opacity:.9;
-}
-
-.actions{
-    margin:15px 0;
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-}
-
-.table-container{
-    background:white;
-    border-radius:10px;
-    overflow:auto;
-    box-shadow:0 2px 10px rgba(0,0,0,.1);
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-}
-
-thead{
-    background:#6a1b9a;
-    color:white;
-}
-
-th,td{
-    padding:12px;
-    text-align:center;
-    border-bottom:1px solid #eee;
-}
-
-tr:hover{
-    background:#fafafa;
-}
-
-.paid{
-    color:green;
-    font-weight:bold;
-}
-
-.pending{
-    color:red;
-    font-weight:bold;
-}
-
-.delete-btn{
-    background:#dc3545;
-}
-
-.search-box{
-    width:300px;
-    max-width:100%;
-}
-</style>
+        .form{
+            background:white;
+            padding:15px;
+            margin-bottom:20px;
+        }
+    </style>
 </head>
 <body>
 
-<div class="container">
-
-<h1>Nadia 2026-27 Print Cash Management</h1>
+<h2>Union Print Cash Management</h2>
 
 <div class="dashboard">
     <div class="card">
-        <h3>Total Revenue</h3>
-        <h2 id="revenue">₹0</h2>
+        <h3>Paid Amount</h3>
+        ₹<span id="paidTotal">0</span>
     </div>
 
     <div class="card">
-        <h3>Total Paid</h3>
-        <h2 id="paid">₹0</h2>
+        <h3>Pending Amount</h3>
+        ₹<span id="pendingTotal">0</span>
     </div>
 
     <div class="card">
-        <h3>Total Pending</h3>
-        <h2 id="pending">₹0</h2>
+        <h3>Balance</h3>
+        ₹<span id="balance">0</span>
     </div>
 </div>
 
-<div class="form-section">
+<div class="form">
 
-<h3>Add Print Order</h3><br>
+    <input type="date" id="date">
 
-<div class="form-grid">
+    <input type="text" id="customer"
+           placeholder="Customer Name">
 
-<input type="date" id="date">
+    <input type="text" id="details"
+           placeholder="Printing Details">
 
-<input type="text" id="customer" placeholder="Customer Name">
+    <input type="number" id="copies"
+           placeholder="Copies/Pages">
 
-<input type="text" id="details" placeholder="Printing Details">
+    <input type="number" id="price"
+           placeholder="Unit Price">
 
-<input type="number" id="copies" placeholder="Copies/Pages">
+    <select id="status">
+        <option>Paid</option>
+        <option>Pending</option>
+    </select>
 
-<input type="number" id="price" placeholder="Unit Price">
-
-<select id="status">
-    <option value="Paid">Paid</option>
-    <option value="Pending">Pending</option>
-</select>
-
-<button onclick="addRecord()">Add Order</button>
-<button onclick="exportPDF()">Export PDF</button>
+    <button onclick="addOrder()">Add Order</button>
+    <button onclick="generatePDF()">Export PDF</button>
 
 </div>
-</div>
 
-<div class="actions">
-    <input type="text" id="search" class="search-box" placeholder="Search Customer..." onkeyup="renderTable()">
-    <button onclick="exportCSV()">Export CSV</button>
-    <button onclick="window.print()">Print Report</button>
-</div>
-
-<div class="table-container">
-
-<table>
-
-<thead>
-<tr>
-<th>Date</th>
-<th>Customer Name</th>
-<th>Printing Details</th>
-<th>Copies/Pages</th>
-<th>Unit Price (₹)</th>
-<th>Total Amount (₹)</th>
-<th>Payment Status</th>
-<th>Action</th>
-</tr>
-</thead>
-
-<tbody id="tableBody"></tbody>
-
+<table id="orderTable">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Customer Name</th>
+            <th>Printing Details</th>
+            <th>Copies</th>
+            <th>Unit Price</th>
+            <th>Total Amount</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
 </table>
-
-</div>
-
-</div>
 
 <script>
 
-let records = JSON.parse(localStorage.getItem('printRecords')) || [];
+let orders = JSON.parse(localStorage.getItem("orders")) || [];
 
 function saveData(){
-    localStorage.setItem('printRecords',JSON.stringify(records));
+    localStorage.setItem("orders",
+    JSON.stringify(orders));
 }
 
-function addRecord(){
+function addOrder(){
 
-    const date=document.getElementById('date').value;
-    const customer=document.getElementById('customer').value;
-    const details=document.getElementById('details').value;
-    const copies=parseInt(document.getElementById('copies').value);
-    const price=parseFloat(document.getElementById('price').value);
-    const status=document.getElementById('status').value;
+    let date=document.getElementById("date").value;
+    let customer=document.getElementById("customer").value;
+    let details=document.getElementById("details").value;
+    let copies=Number(document.getElementById("copies").value);
+    let price=Number(document.getElementById("price").value);
+    let status=document.getElementById("status").value;
 
-    if(!date || !customer || !details || !copies || !price){
-        alert("Please fill all fields");
-        return;
-    }
+    let total=copies*price;
 
-    const total=copies*price;
-
-    records.push({
+    orders.push({
         date,
         customer,
         details,
@@ -256,164 +165,114 @@ function addRecord(){
     });
 
     saveData();
-    renderTable();
-
-    document.getElementById('customer').value='';
-    document.getElementById('details').value='';
-    document.getElementById('copies').value='';
-    document.getElementById('price').value='';
+    displayOrders();
 }
 
-function renderTable(){
+function displayOrders(){
 
-    let html='';
+    let tbody=document.querySelector("#orderTable tbody");
+    tbody.innerHTML="";
 
-    let revenue=0;
     let paid=0;
     let pending=0;
 
-    const search=document.getElementById('search').value.toLowerCase();
+    orders.forEach((o,index)=>{
 
-    records.forEach((r,index)=>{
-
-        if(
-            !r.customer.toLowerCase().includes(search) &&
-            !r.details.toLowerCase().includes(search)
-        ){
-            return;
-        }
-
-        revenue+=r.total;
-
-        if(r.status==='Paid'){
-            paid+=r.total;
+        if(o.status==="Paid"){
+            paid+=o.total;
         }else{
-            pending+=r.total;
+            pending+=o.total;
         }
 
-        html+=`
+        tbody.innerHTML+=`
         <tr>
-            <td>${r.date}</td>
-            <td>${r.customer}</td>
-            <td>${r.details}</td>
-            <td>${r.copies}</td>
-            <td>${r.price}</td>
-            <td>${r.total}</td>
-            <td class="${r.status==='Paid'?'paid':'pending'}">
-                ${r.status}
+            <td>${o.date}</td>
+            <td>${o.customer}</td>
+            <td>${o.details}</td>
+            <td>${o.copies}</td>
+            <td>₹${o.price}</td>
+            <td>₹${o.total}</td>
+
+            <td class="${o.status==='Paid'
+            ?'paid':'pending'}">
+            ${o.status}
             </td>
+
             <td>
-                <button class="delete-btn"
-                onclick="deleteRecord(${index})">
-                Delete
+                <button onclick="toggleStatus(${index})">
+                    Edit Status
+                </button>
+
+                <button onclick="deleteOrder(${index})">
+                    Delete
                 </button>
             </td>
-        </tr>
-        `;
+        </tr>`;
     });
 
-    document.getElementById('tableBody').innerHTML=html;
-
-    document.getElementById('revenue').innerText='₹'+revenue;
-    document.getElementById('paid').innerText='₹'+paid;
-    document.getElementById('pending').innerText='₹'+pending;
+    document.getElementById("paidTotal").innerText=paid;
+    document.getElementById("pendingTotal").innerText=pending;
+    document.getElementById("balance").innerText=paid;
 }
 
-function deleteRecord(index){
+function toggleStatus(index){
 
-    if(confirm('Delete this record?')){
-        records.splice(index,1);
-        saveData();
-        renderTable();
-    }
+    orders[index].status=
+    orders[index].status==="Paid"
+    ?"Pending":"Paid";
 
+    saveData();
+    displayOrders();
 }
 
-function exportCSV(){
+function deleteOrder(index){
 
-    let csv =
-    "Date,Customer,Printing Details,Copies,Unit Price,Total,Status\n";
+    orders.splice(index,1);
 
-    records.forEach(r=>{
-        csv +=
-        `${r.date},${r.customer},${r.details},${r.copies},${r.price},${r.total},${r.status}\n`;
-    });
-
-    const blob=new Blob([csv],{type:'text/csv'});
-    const url=window.URL.createObjectURL(blob);
-
-    const a=document.createElement('a');
-    a.href=url;
-    a.download='PrintShopReport.csv';
-    a.click();
+    saveData();
+    displayOrders();
 }
-    function exportPDF() {
 
-    const { jsPDF } = window.jspdf;
+function generatePDF(){
 
-    const doc = new jsPDF();
+    const {jsPDF}=window.jspdf;
 
-    doc.setFontSize(18);
-    doc.text("Print Shop Cash Report", 14, 20);
+    const doc=new jsPDF();
 
-    const tableData = [];
+    doc.text(
+      "Union Print Cash Report",
+      14,
+      15
+    );
 
-    records.forEach(r => {
-        tableData.push([
-            r.date,
-            r.customer,
-            r.details,
-            r.copies,
-            "₹" + r.price,
-            "₹" + r.total,
-            r.status
-        ]);
-    });
+    let rows=orders.map(o=>[
+        o.date,
+        o.customer,
+        o.details,
+        o.copies,
+        o.price,
+        o.total,
+        o.status
+    ]);
 
     doc.autoTable({
-        startY: 30,
-        head: [[
+        head:[[
             "Date",
             "Customer",
-            "Printing Details",
+            "Details",
             "Copies",
             "Unit Price",
             "Total",
             "Status"
         ]],
-        body: tableData,
-        styles: {
-            fontSize: 9
-        },
-        headStyles: {
-            fillColor: [106,27,154]
-        }
+        body:rows,
+        startY:25
     });
 
-    let revenue = 0;
-    let paid = 0;
-    let pending = 0;
-
-    records.forEach(r => {
-        revenue += r.total;
-
-        if(r.status === "Paid"){
-            paid += r.total;
-        }else{
-            pending += r.total;
-        }
-    });
-
-    const finalY = doc.lastAutoTable.finalY + 15;
-
-    doc.text("Total Revenue : ₹" + revenue, 14, finalY);
-    doc.text("Total Paid : ₹" + paid, 14, finalY + 10);
-    doc.text("Total Pending : ₹" + pending, 14, finalY + 20);
-
-    doc.save("PrintShop_Report.pdf");
+    doc.save("Union_Print_Report.pdf");
 }
 
-renderTable();
+displayOrders();
 
 </script>
 
