@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -941,26 +940,41 @@ const App = (() => {
       const {jsPDF} = window.jspdf;
       const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
       const src = filtered.length ? filtered : orders;
+
+      // Header banner
       doc.setFillColor(0,122,255); doc.rect(0,0,297,22,'F');
       doc.setTextColor(255,255,255); doc.setFontSize(14); doc.setFont(undefined,'bold');
-      doc.text('Union Print – Cash Management Report', 12, 9);
+      doc.text('Union Print - Cash Management Report', 12, 9);
       doc.setFontSize(9); doc.setFont(undefined,'normal');
-      doc.text(`Generated: ${new Date().toLocaleDateString('en-IN')}  |  Orders: ${src.length}`, 12, 17);
+      doc.text('Generated: ' + new Date().toLocaleDateString('en-IN') + '  |  Orders: ' + src.length, 12, 17);
+
+      // Summary row (use Rs. instead of rupee symbol - jsPDF default font doesn't support it)
       const pd = sum(orders.filter(o=>o.status==='Paid'));
       const pn = sum(orders.filter(o=>o.status==='Pending'));
       doc.setTextColor(0,0,0); doc.setFontSize(10); doc.setFont(undefined,'bold');
-      doc.text(`Paid: ₹${f(pd)}   Pending: ₹${f(pn)}   Grand Total: ₹${f(pd+pn)}`, 12, 28);
+      doc.text('Paid: Rs.' + f(pd) + '   Pending: Rs.' + f(pn) + '   Grand Total: Rs.' + f(pd+pn), 12, 30);
+
+      // Table
       doc.autoTable({
-        startY:32,
-        head:[['#','Order ID','Date','Customer','Class','Phone','Details','Copies','Unit','Total','Payment','Status','Remarks']],
-        body: src.map((o,i)=>[i+1,o.id,o.date,o.name,o.cls,o.phone,(o.details||'').substring(0,25),o.copies,'₹'+f(o.unitPrice),'₹'+f(o.total),o.payment,o.status,o.remarks||'']),
-        styles:{fontSize:7.5,cellPadding:2},
-        headStyles:{fillColor:[0,122,255],textColor:255,fontStyle:'bold'},
+        startY: 35,
+        head:[['#','Order ID','Date','Customer','Class','Phone','Details','Copies','Unit(Rs)','Total(Rs)','Payment','Status','Remarks']],
+        body: src.map((o,i)=>[
+          i+1, o.id, o.date||'', o.name||'', o.cls||'', o.phone||'',
+          (o.details||'').substring(0,25),
+          o.copies,
+          f(o.unitPrice),
+          f(o.total),
+          o.payment||'', o.status||'', o.remarks||''
+        ]),
+        styles:{fontSize:7.5, cellPadding:2, font:'helvetica'},
+        headStyles:{fillColor:[0,122,255], textColor:255, fontStyle:'bold'},
         alternateRowStyles:{fillColor:[242,242,247]},
+        columnStyles:{6:{cellWidth:28}, 12:{cellWidth:22}},
       });
-      doc.save(`Union_Print_Report_${today().replace(/-/g,'_')}.pdf`);
+
+      doc.save('Union_Print_Report_' + today().replace(/-/g,'_') + '.pdf');
       toast('PDF exported!','success');
-    } catch(e){toast('PDF failed: '+e.message,'error');}
+    } catch(e){ toast('PDF failed: '+e.message,'error'); console.error(e); }
   }
 
   /* ── EXPORT EXCEL ── */
