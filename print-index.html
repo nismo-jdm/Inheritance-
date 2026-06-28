@@ -959,7 +959,7 @@ const App = (() => {
         startY: 35,
         head:[['#','Date','Customer','Class','Details','Copies','Unit(Rs)','Total(Rs)','Payment','Status',]],
         body: src.map((o,i)=>[
-          i+1, o.id, o.date||'', o.name||'', o.cls||'', o.phone||'',
+          i+1, o.date||'', o.name||'', o.cls||'',
           (o.details||'').substring(0,25),
           o.copies,
           f(o.unitPrice),
