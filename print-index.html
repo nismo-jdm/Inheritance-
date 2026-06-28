@@ -944,7 +944,7 @@ const App = (() => {
       // Header banner
       doc.setFillColor(0,122,255); doc.rect(0,0,297,22,'F');
       doc.setTextColor(255,255,255); doc.setFontSize(14); doc.setFont(undefined,'bold');
-      doc.text('Union Print - Cash Management Report', 12, 9);
+      doc.text('Nadia Print 2026-27 Report', 12, 9);
       doc.setFontSize(9); doc.setFont(undefined,'normal');
       doc.text('Generated: ' + new Date().toLocaleDateString('en-IN') + '  |  Orders: ' + src.length, 12, 17);
 
@@ -957,7 +957,7 @@ const App = (() => {
       // Table
       doc.autoTable({
         startY: 35,
-        head:[['#','Order ID','Date','Customer','Class','Phone','Details','Copies','Unit(Rs)','Total(Rs)','Payment','Status','Remarks']],
+        head:[['#','Date','Customer','Class','Details','Copies','Unit(Rs)','Total(Rs)','Payment','Status',]],
         body: src.map((o,i)=>[
           i+1, o.id, o.date||'', o.name||'', o.cls||'', o.phone||'',
           (o.details||'').substring(0,25),
@@ -983,7 +983,7 @@ const App = (() => {
       const src = filtered.length ? filtered : orders;
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.aoa_to_sheet([
-        ['Order ID','Date','Customer','Class','Phone','Details','Copies','Unit Price','Total','Payment','Status','Remarks','Created'],
+        ['Date','Customer','Class','Details','Copies','Unit Price','Total','Payment','Status','Created'],
         ...src.map(o=>[o.id,o.date,o.name,o.cls,o.phone,o.details,o.copies,o.unitPrice,o.total,o.payment,o.status,o.remarks,o.createdAt])
       ]);
       ws['!cols']=[10,12,20,12,14,30,8,10,10,14,10,20,18].map(w=>({wch:w}));
