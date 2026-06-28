@@ -949,7 +949,6 @@ const App = (() => {
       doc.text('Generated: ' + new Date().toLocaleDateString('en-IN') + '  |  Orders: ' + src.length, 12, 17);
 
       // Summary row (use Rs. instead of rupee symbol - jsPDF default font doesn't support it)
-      const pd = sum(orders.filter(o=>o.status==='Paid'));
       const pn = sum(orders.filter(o=>o.status==='Pending'));
       doc.setTextColor(0,0,0); doc.setFontSize(10); doc.setFont(undefined,'bold');
       doc.text('Pending: Rs.' + f(pn) + '   Grand Total: Rs.' + f(pd+pn), 12, 30);
