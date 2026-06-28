@@ -469,12 +469,17 @@ tbody td{padding:10px 9px;vertical-align:middle}
             <option>Class 1</option><option>Class 2</option><option>Class 3</option>
             <option>Class 4</option><option>Class 5</option><option>Class 6</option>
             <option>Class 7</option><option>Class 8</option><option>Class 9</option>
-            <option>Class 10</option><option>Staff</option>
+            <option>Class 10</option><option>Plus One</option><option>Plus Two</option>
+            <option>Degree</option><option>PG</option><option>Staff</option><option>External</option>
           </select>
+        </div>
+        <div class="fg">
+          <label>Phone Number</label>
+          <input type="tel" id="f-phone" placeholder="Phone number" inputmode="numeric">
         </div>
         <div class="fg full">
           <label>Printing Details</label>
-          <option id="f-details" >Class 1</option><option id="f-details">Class 2</option>
+          <textarea id="f-details" placeholder="Describe the print job…"></textarea>
         </div>
         <div class="fg">
           <label>Copies / Pages *</label>
@@ -685,7 +690,7 @@ const App = (() => {
     const td = today();
 
     filtered = orders.filter(o => {
-      if(q && !`${o.name}${o.cls} ${o.details}`.toLowerCase().includes(q)) return false;
+      if(q && !`${o.name} ${o.phone} ${o.cls} ${o.details}`.toLowerCase().includes(q)) return false;
       if(st && o.status !== st) return false;
       if(cl && o.cls !== cl) return false;
       if(df === 'today' && o.date !== td) return false;
@@ -723,6 +728,7 @@ const App = (() => {
         <td>${o.date||''}</td>
         <td style="font-weight:600">${esc(o.name)}</td>
         <td>${esc(o.cls)}</td>
+        <td>${esc(o.phone)}</td>
         <td class="ellipsis" title="${esc(o.details)}">${esc(o.details)}</td>
         <td>${o.copies}</td>
         <td>₹${f(o.unitPrice)}</td>
@@ -755,6 +761,7 @@ const App = (() => {
         </div>
       </div>
       ${mini ? '' : `<div class="oc-grid">
+        <div class="oc-item"><div class="oc-item-label">Phone</div><div class="oc-item-value">${esc(o.phone)||'—'}</div></div>
         <div class="oc-item"><div class="oc-item-label">Copies</div><div class="oc-item-value">${o.copies}</div></div>
         <div class="oc-item"><div class="oc-item-label">Unit Price</div><div class="oc-item-value">₹${f(o.unitPrice)}</div></div>
         <div class="oc-item"><div class="oc-item-label">Payment</div><div class="oc-item-value">${esc(o.payment)}</div></div>
