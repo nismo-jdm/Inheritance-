@@ -952,7 +952,7 @@ const App = (() => {
       const pd = sum(orders.filter(o=>o.status==='Paid'));
       const pn = sum(orders.filter(o=>o.status==='Pending'));
       doc.setTextColor(0,0,0); doc.setFontSize(10); doc.setFont(undefined,'bold');
-      doc.text('Paid: Rs.' + f(pd) + '   Pending: Rs.' + f(pn) + '   Grand Total: Rs.' + f(pd+pn), 12, 30);
+      doc.text('Pending: Rs.' + f(pn) + '   Grand Total: Rs.' + f(pd+pn), 12, 30);
 
       // Table
       doc.autoTable({
